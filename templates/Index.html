@@ -114,10 +114,15 @@
             var selectedZone = zoneElement.value;
 
             var EastingInput = document.getElementById("Easting");
-            var Easting = EastingInput.value.trim();
+            var Easting = parseFloat(EastingInput.value.trim());
 
             var NorthingInput = document.getElementById("Northing");
-            var Northing = NorthingInput.value.trim();
+            var Northing = parseFloat(NorthingInput.value.trim());
+
+            if (isNaN(Easting) || isNaN(Northing)) {
+                alert("Please enter valid numerical values for Easting and Northing.");
+                return;
+            }
 
             fetch('/convert_coordinates', {
                 method: 'POST',
@@ -143,6 +148,7 @@
             })
             .catch((error) => {
                 console.error('Error:', error);
+                alert("An error occurred while converting the coordinates.");
             });
         }
     </script>
