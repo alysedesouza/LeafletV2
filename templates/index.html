@@ -114,15 +114,19 @@
             var selectedZone = zoneElement.value;
 
             var EastingInput = document.getElementById("Easting");
-            var Easting = parseFloat(EastingInput.value.trim());
+            var Easting = EastingInput.value.trim();
 
             var NorthingInput = document.getElementById("Northing");
-            var Northing = parseFloat(NorthingInput.value.trim());
+            var Northing = NorthingInput.value.trim();
 
-            if (isNaN(Easting) || isNaN(Northing)) {
-                alert("Please enter valid numerical values for Easting and Northing.");
+            // Validate input values
+            if (!Easting || !Northing || isNaN(Easting) || isNaN(Northing)) {
+                console.error('Invalid Easting or Northing value');
+                alert('Please enter valid Easting and Northing values.');
                 return;
             }
+
+            console.log(`Sending data: Zone=${selectedZone}, Easting=${Easting}, Northing=${Northing}`);
 
             fetch('/convert_coordinates', {
                 method: 'POST',
@@ -131,8 +135,14 @@
                 },
                 body: JSON.stringify({ zone: selectedZone, eastings: Easting, northings: Northing }),
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('Received data:', data);
                 var resultSection = document.getElementById("resultSection");
                 var resultParagraph = document.getElementById("result");
 
@@ -148,7 +158,7 @@
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert("An error occurred while converting the coordinates.");
+                alert('An error occurred while converting coordinates. Please try again.');
             });
         }
     </script>
